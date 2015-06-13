@@ -17,22 +17,19 @@
 	</bean>
 	
 	<!-- ItemDao -->
-	<bean id="itemDao" class="com.jjb.dao.impl.ItemDaoImpl">
-		<property name="sessionFactory" ref="sessionFactory" />
-	</bean>
+	<bean id="itemDao" class="com.jjb.dao.impl.ItemDaoImpl" />
 	<!-- UserDao -->
-	<bean id="userDao" class="com.jjb.dao.impl.UserDaoImpl">
-		<property name="sessionFactory" ref="sessionFactory" />
-	</bean>
+	<bean id="userDao" class="com.jjb.dao.impl.UserDaoImpl" />
 	<!-- MoneyDao -->
-	<bean id="moneyDao" class="com.jjb.dao.impl.MoneyDaoImpl">
-		<property name="sessionFactory" ref="sessionFactory" />
-	</bean>
+	<bean id="moneyDao" class="com.jjb.dao.impl.MoneyDaoImpl" />
+	<!-- AccessKeyDao -->
+	<bean id="accessKeyDao" class="com.jjb.dao.impl.AccessKeyDaoImpl" />
 	
 	<!-- JJBAction -->
 	<bean id="jjbAction" class="com.jjb.action.JJBAction">
 		<property name="itemDao" ref="itemDao" />
 		<property name="userDao" ref="userDao" />
 		<property name="moneyDao" ref="moneyDao" />
+		<property name="accessKeyDao" ref="accessKeyDao" />
 	</bean>
 </beans>

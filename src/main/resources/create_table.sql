@@ -11,13 +11,14 @@ create table Money(
 );
 
 create table Item(
-	itemId INTEGER AUTO_INCREMENT PRIMARY KEY,
+	itemId VARCHAR(255) PRIMARY KEY,
 	userId INTEGER not null,
 	name NVARCHAR(255) not null,
 	price REAL DEFAULT 0,
 	isOut BIT not null,
 	classify tinyint not null,
-	time datetime not null
+	occuredTime datetime not null,
+	modifiedTime datetime not null
 );
 
 create table AccessKey(

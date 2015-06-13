@@ -6,13 +6,19 @@ import com.jjb.dao.UserDao;
 public class UserDaoImpl extends BaseDaoImpl implements UserDao {
 
 	public User queryUser(String username) {
-		// TODO Auto-generated method stub
-		return null;
+		return (User) getSession().createQuery("From User u where u.username='" + username + "'")
+							.uniqueResult();
 	}
 
 	public boolean insertUser(User user) {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			int id = (Integer) getSession().save(user);
+			user.setUserId(id);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
 	}
 
 }

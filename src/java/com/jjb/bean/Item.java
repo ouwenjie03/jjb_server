@@ -8,13 +8,14 @@ import java.util.Date;
  */
 public class Item {
 	
-	private int itemId;
+	private String itemId;
 	private int userId;
 	private String name;
 	private double price;
 	private boolean isOut;
 	private int classify;
-	private Date time;
+	private Date occurredTime;
+	private Date modifiedTime;
 	
 	/**
 	 * 返回该Item的JSON表示
@@ -22,18 +23,20 @@ public class Item {
 	 */
 	public String toString() {
 		return new StringBuilder("{\"userId\":\"").append(userId)
+				.append("\", \"itemId\":\"").append(itemId)
 				.append("\", \"name\": \"").append(name)
 				.append("\", \"price\": \"").append(price)
 				.append("\", \"isOut\": \"").append(isOut)
 				.append("\", \"classify\": \"").append(classify)
-				.append("\", \"time\": \"").append(time)
+				.append("\", \"occurredTime\": \"").append(occurredTime)
+				.append("\", \"modifiedTime\": \"").append(modifiedTime)
 				.append("\"}").toString();
 	}
 	
-	public int getItemId() {
+	public String getItemId() {
 		return itemId;
 	}
-	public void setItemId(int itemId) {
+	public void setItemId(String itemId) {
 		this.itemId = itemId;
 	}
 	public int getUserId() {
@@ -54,10 +57,10 @@ public class Item {
 	public void setPrice(double price) {
 		this.price = price;
 	}
-	public boolean getOut() {
+	public boolean getIsOut() {
 		return isOut;
 	}
-	public void setOut(boolean isOut) {
+	public void setIsOut(boolean isOut) {
 		this.isOut = isOut;
 	}
 	public int getClassify() {
@@ -66,11 +69,21 @@ public class Item {
 	public void setClassify(int classify) {
 		this.classify = classify;
 	}
-	public Date getTime() {
-		return time;
+
+	public Date getOccurredTime() {
+		return occurredTime;
 	}
-	public void setTime(Date time) {
-		this.time = time;
+
+	public void setOccurredTime(Date occurredTime) {
+		this.occurredTime = occurredTime;
+	}
+
+	public Date getModifiedTime() {
+		return modifiedTime;
+	}
+
+	public void setModifiedTime(Date modifiedTime) {
+		this.modifiedTime = modifiedTime;
 	}
 	
 	

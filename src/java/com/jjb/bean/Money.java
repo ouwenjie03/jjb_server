@@ -6,6 +6,15 @@ package com.jjb.bean;
  */
 public class Money {
 	private int userId;
+	private double totalMoney;
+	
+	public Money() {}
+	
+	public Money(int userId, double totalMoney) {
+		this.userId = userId;
+		this.totalMoney = totalMoney;
+	}
+	
 	public int getUserId() {
 		return userId;
 	}
@@ -18,5 +27,4 @@ public class Money {
 	public void setTotalMoney(double totalMoney) {
 		this.totalMoney = totalMoney;
 	}
-	private double totalMoney;
 }
