@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+	<!-- Hibernate会话工厂实例 -->
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="configLocation">
+			<value>classpath:hibernate.cfg.xml</value>
+		</property>
+	</bean>
+	<!-- 添加对事务处理的支持 -->
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory">
+			<ref local="sessionFactory" />
+		</property>
+	</bean>
+	
+	<!-- ItemDao -->
+	<bean id="itemDao" class="com.jjb.dao.impl.ItemDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	<!-- UserDao -->
+	<bean id="userDao" class="com.jjb.dao.impl.UserDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	<!-- MoneyDao -->
+	<bean id="moneyDao" class="com.jjb.dao.impl.MoneyDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	
+	<!-- JJBAction -->
+	<bean id="jjbAction" class="com.jjb.action.JJBAction">
+		<property name="itemDao" ref="itemDao" />
+		<property name="userDao" ref="userDao" />
+		<property name="moneyDao" ref="moneyDao" />
+	</bean>
+</beans>
