@@ -2,9 +2,11 @@ package com.jjb.action;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
@@ -21,6 +23,7 @@ import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 import com.jjb.bean.AccessKey;
 import com.jjb.bean.Item;
 import com.jjb.bean.Money;
+import com.jjb.bean.User;
 import com.jjb.dao.AccessKeyDao;
 import com.jjb.dao.ItemDao;
 import com.jjb.dao.MoneyDao;
@@ -44,7 +47,7 @@ public class JJBAction extends HibernateDaoSupport {
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 	
 	/**
-	 * 用户登录
+	 * 用户登录, 有效期一个月
 	 * @param username 用户名
 	 * @param password hash以后的32位密码
 	 * @return
@@ -59,8 +62,28 @@ public class JJBAction extends HibernateDaoSupport {
 			@FormParam("password") @DefaultValue("") String password) {
 		if (username.isEmpty() || password.isEmpty() || !password.matches("[0-9a-f]{32}"))
 			return JSONResponse.fail();
-		// TODO to be implemented
-		return JSONResponse.signInSuccess(0, "dummy", new Date());
+		User user = userDao.queryUser(username);
+		if (user.getPassword().equals(password)) {
+			// 有效期一个月
+			Date expiresTime = new Date();
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(expiresTime);
+			calendar.add(Calendar.MONTH, 1);
+			expiresTime = calendar.getTime();
+
+			// 保存accessKey
+			String accessKeyStr = UUID.randomUUID().toString().replace("-", "");
+			AccessKey accessKey = new AccessKey();
+			accessKey.setAccessKey(accessKeyStr);
+			accessKey.setUserId(user.getUserId());
+			accessKey.setExpiresTime(expiresTime);
+			accessKeyDao.setAccessKey(accessKey);
+
+			return JSONResponse.signInSuccess(user.getUserId(), accessKeyStr,
+					expiresTime);
+		} else {
+			return JSONResponse.fail();
+		}
 	}
 	
 	/**
@@ -79,8 +102,35 @@ public class JJBAction extends HibernateDaoSupport {
 			@FormParam("password") @DefaultValue("") String password) {
 		if (username.isEmpty() || password.isEmpty() || !password.matches("[0-9a-f]{32}"))
 			return JSONResponse.fail();
-		// TODO to be implemented
-		return JSONResponse.signUpSuccess(0, "dummy", new Date());
+		User user = userDao.queryUser(username);
+		if (user != null) {
+			// 用户存在
+			return JSONResponse.fail();
+		} else {
+			user = new User();
+			user.setUsername(username);
+			user.setPassword(password);
+			userDao.insertUser(user);
+			user = userDao.queryUser(username);
+			
+			// 有效期一个月
+			Date expiresTime = new Date();
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(expiresTime);
+			calendar.add(Calendar.MONTH, 1);
+			expiresTime = calendar.getTime();
+
+			// 保存accessKey
+			String accessKeyStr = UUID.randomUUID().toString().replace("-", "");
+			AccessKey accessKey = new AccessKey();
+			accessKey.setAccessKey(accessKeyStr);
+			accessKey.setUserId(user.getUserId());
+			accessKey.setExpiresTime(expiresTime);
+			accessKeyDao.setAccessKey(accessKey);
+
+			return JSONResponse.signInSuccess(user.getUserId(), accessKeyStr,
+					expiresTime);
+		}
 	}
 	
 	/**
