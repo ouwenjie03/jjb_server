@@ -6,13 +6,17 @@ import com.jjb.dao.MoneyDao;
 public class MoneyDaoImpl extends BaseDaoImpl implements MoneyDao {
 
 	public Money queryMoney(int userId) {
-		// TODO Auto-generated method stub
-		return null;
+		return (Money) getSession().load(Money.class, userId);
 	}
 
 	public boolean setMoney(Money money) {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			getSession().saveOrUpdate(money);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
 	}
 
 }

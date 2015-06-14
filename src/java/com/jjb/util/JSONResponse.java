@@ -13,6 +13,8 @@ import com.jjb.bean.Item;
  * @author Robert Peng
  */
 public class JSONResponse {
+	private static int GENERIC_FAIL = 0;
+	private static int NEED_SIGN_IN = 1;
 
 	public static String signInSuccess(int userId, String accessKey, Date expiresTime) {
 		JSONObject result = new JSONObject();
@@ -35,6 +37,14 @@ public class JSONResponse {
 	public static String fail() {
 		JSONObject result = new JSONObject();
 		result.put("failed", true);
+		result.put("failedCode", GENERIC_FAIL);
+		return result.toString();
+	}
+	
+	public static String needSignIn() {
+		JSONObject result = new JSONObject();
+		result.put("failed", true);
+		result.put("failedCode", NEED_SIGN_IN);
 		return result.toString();
 	}
 	
@@ -48,10 +58,9 @@ public class JSONResponse {
 		return result.toString();
 	}
 	
-	public static String syncOK(int syncCount, Date modifiedDate) {
+	public static String syncOK(int syncCount) {
 		JSONObject result = new JSONObject();
 		result.put("syncCount", syncCount);
-		result.put("modifiedDate", modifiedDate.toString());
 		return result.toString();
 	}
 	
