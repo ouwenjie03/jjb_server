@@ -4,7 +4,7 @@
 	<display-name>JJB</display-name>
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
-		<param-value>/WEB-INF/applicationContext.xml</param-value>
+		<param-value>classpath:applicationContext.xml</param-value>
 	</context-param>
 
 	<!-- 字符集拦截转换 -->

@@ -6,8 +6,6 @@
 	<class name="Money" table="Money">
 		<!-- 定义id -->
 		<id name="userId" column="userId" type="integer" />
-		<!-- 定义已使用金额 -->
-		<property name="usedMoney" column="usedMoney" type="double" />
 		<!-- 定义总可用金额 -->
 		<property name="totalMoney" column="totalMoney" type="double" />
 	</class>

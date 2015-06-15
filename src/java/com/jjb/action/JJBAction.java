@@ -11,6 +11,7 @@ import java.util.UUID;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -54,7 +55,8 @@ public class JJBAction extends HibernateDaoSupport {
 	 * 		登录成功则返回JSONResponse.signInSuccess，携带userId、accessKey与expiresTime
 	 * 		登录失败则返回JSONResponse.fail
 	 */
-	@POST
+	//@POST
+	@GET
 	@Path("signIn")
 	@Consumes("application/x-www-form-urlencoded")
 	public String userSignIn(

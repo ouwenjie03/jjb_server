@@ -17,7 +17,7 @@
 		<!-- 定义分类 -->
 		<property name="classify" column="classify" type="integer" />
 		<!-- 定义事件发生日期 -->
-		<property name="occuredTime" column="occuredTime" type="java.util.Date" />
+		<property name="occurredTime" column="occurredTime" type="java.util.Date" />
 		<!-- 定义记录修改日期 -->
 		<property name="modifiedTime" column="modifiedTime" type="java.util.Date" />
 	</class>
