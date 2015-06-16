@@ -17,7 +17,7 @@ create table Item(
 	price REAL DEFAULT 0,
 	isOut BIT not null,
 	classify tinyint not null,
-	occuredTime datetime not null,
+	occurredTime datetime not null,
 	modifiedTime datetime not null
 );
 
