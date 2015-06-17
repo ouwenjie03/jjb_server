@@ -5,9 +5,7 @@
 <hibernate-mapping package="com.jjb.bean">
 	<class name="Item" table="Item">
 		<!-- 定义id -->
-		<id name="itemId" column="itemId" type="integer">
-			<generator class="native" />
-		</id>
+		<id name="itemId" column="itemId" type="string" length="255" />
 		<!-- 定义用户id -->
 		<property name="userId" column="userId" type="integer" />
 		<!-- 定义使用项名称 -->

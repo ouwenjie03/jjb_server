@@ -13,7 +13,14 @@ public class ItemDaoImpl extends BaseDaoImpl implements ItemDao {
 
 	public boolean insertItem(Item item) {
 		try {
-			getSession().saveOrUpdate(item);
+			Item existItem = (Item)getSession().createQuery("From Item i where i.itemId='" + item.getItemId() + "'")
+					.uniqueResult();
+			if (existItem == null) {
+				getSession().save(item);
+			} else {
+				existItem.setItemAll(item);
+				getSession().update(existItem);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
@@ -25,7 +32,14 @@ public class ItemDaoImpl extends BaseDaoImpl implements ItemDao {
 		int successCounter = 0;
 		for (Item item : items) {
 			try {
-				getSession().saveOrUpdate(item);
+				Item existItem = (Item)getSession().createQuery("From Item i where i.itemId='" + item.getItemId() + "'")
+						.uniqueResult();
+				if (existItem == null) {
+					getSession().save(item);
+				} else {
+					existItem.setItemAll(item);
+					getSession().update(existItem);
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 				successCounter--;

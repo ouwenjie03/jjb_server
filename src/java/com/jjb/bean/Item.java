@@ -8,7 +8,7 @@ import java.util.Date;
  */
 public class Item {
 	
-	private int itemId;
+	private String itemId;
 	private int userId;
 	private String name;
 	private double price;
@@ -33,10 +33,10 @@ public class Item {
 				.append("\"}").toString();
 	}
 	
-	public int getItemId() {
+	public String getItemId() {
 		return itemId;
 	}
-	public void setItemId(int itemId) {
+	public void setItemId(String itemId) {
 		this.itemId = itemId;
 	}
 	public int getUserId() {
@@ -86,5 +86,14 @@ public class Item {
 		this.modifiedTime = modifiedTime;
 	}
 	
-	
+	public void setItemAll(Item other) {
+		this.classify = other.classify;
+		this.isOut = other.isOut;
+		this.itemId = other.itemId;
+		this.modifiedTime = other.modifiedTime;
+		this.name = other.name;
+		this.occurredTime = other.occurredTime;
+		this.price = other.price;
+		this.userId = other.userId;
+	}
 }

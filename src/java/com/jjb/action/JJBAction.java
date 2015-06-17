@@ -269,7 +269,8 @@ public class JJBAction extends HibernateDaoSupport {
 			currentItem = new Item();
 			try {
 				currentItem.setUserId(currentObject.getInt("userId"));
-				currentItem.setItemId(currentObject.getInt("itemId"));
+				currentItem.setItemId("" + currentObject.getInt("userId") + "#"
+						+ currentObject.getInt("itemId"));
 				currentItem.setName(currentObject.getString("name"));
 				currentItem.setIsOut(currentObject.getBoolean("isOut"));
 				currentItem.setPrice(currentObject.getDouble("price"));
