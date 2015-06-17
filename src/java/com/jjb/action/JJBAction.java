@@ -55,15 +55,17 @@ public class JJBAction extends HibernateDaoSupport {
 	 * 		登录成功则返回JSONResponse.signInSuccess，携带userId、accessKey与expiresTime
 	 * 		登录失败则返回JSONResponse.fail
 	 */
-	//@POST
-	@GET
+	@POST
 	@Path("signIn")
 	@Consumes("application/x-www-form-urlencoded")
 	public String userSignIn(
-			@FormParam("username") @DefaultValue("") String username,
-			@FormParam("password") @DefaultValue("") String password) {
+			@DefaultValue("") @FormParam("username") String username,
+			@DefaultValue("") @FormParam("password") String password) {
 		if (username.isEmpty() || password.isEmpty() || !password.matches("[0-9a-f]{32}"))
 			return JSONResponse.fail();
+		session = currentSession();
+		userDao.setSession(session);
+		accessKeyDao.setSession(session);
 		User user = userDao.queryUser(username);
 		if (user.getPassword().equals(password)) {
 			// 有效期一个月
@@ -79,13 +81,19 @@ public class JJBAction extends HibernateDaoSupport {
 			accessKey.setAccessKey(accessKeyStr);
 			accessKey.setUserId(user.getUserId());
 			accessKey.setExpiresTime(expiresTime);
-			accessKeyDao.setAccessKey(accessKey);
-
-			return JSONResponse.signInSuccess(user.getUserId(), accessKeyStr,
-					expiresTime);
-		} else {
-			return JSONResponse.fail();
+			session.beginTransaction();
+			boolean result = accessKeyDao.setAccessKey(accessKey);
+			if (result) {
+				session.flush();
+				session.getTransaction().commit();
+				return JSONResponse.signInSuccess(user.getUserId(), accessKeyStr,
+						expiresTime);
+			}
+			
+			
+			session.getTransaction().rollback();
 		}
+		return JSONResponse.fail();
 	}
 	
 	/**
@@ -100,10 +108,13 @@ public class JJBAction extends HibernateDaoSupport {
 	@Path("signUp")
 	@Consumes("application/x-www-form-urlencoded")
 	public String userSignUp(
-			@FormParam("username") @DefaultValue("") String username,
-			@FormParam("password") @DefaultValue("") String password) {
+			@DefaultValue("") @FormParam("username") String username,
+			@DefaultValue("") @FormParam("password") String password) {
 		if (username.isEmpty() || password.isEmpty() || !password.matches("[0-9a-f]{32}"))
 			return JSONResponse.fail();
+		session = currentSession();
+		userDao.setSession(session);
+		accessKeyDao.setSession(session);
 		User user = userDao.queryUser(username);
 		if (user != null) {
 			// 用户存在
@@ -112,8 +123,12 @@ public class JJBAction extends HibernateDaoSupport {
 			user = new User();
 			user.setUsername(username);
 			user.setPassword(password);
-			userDao.insertUser(user);
-			user = userDao.queryUser(username);
+			session.beginTransaction();
+			boolean result = userDao.insertUser(user);
+			if (!result) {
+				session.getTransaction().rollback();
+				return JSONResponse.fail();
+			}
 			
 			// 有效期一个月
 			Date expiresTime = new Date();
@@ -128,8 +143,13 @@ public class JJBAction extends HibernateDaoSupport {
 			accessKey.setAccessKey(accessKeyStr);
 			accessKey.setUserId(user.getUserId());
 			accessKey.setExpiresTime(expiresTime);
-			accessKeyDao.setAccessKey(accessKey);
+			result = accessKeyDao.setAccessKey(accessKey);
+			if (!result) {
+				return JSONResponse.fail();
+			}
 
+			session.flush();
+			session.getTransaction().commit();
 			return JSONResponse.signInSuccess(user.getUserId(), accessKeyStr,
 					expiresTime);
 		}
@@ -149,7 +169,7 @@ public class JJBAction extends HibernateDaoSupport {
 	@Consumes("application/x-www-form-urlencoded")
 	public String setting(
 			@FormParam("userId") int userId,
-			@FormParam("accessKey") @DefaultValue("") String accessKey,
+			@DefaultValue("") @FormParam("accessKey") String accessKey,
 			@FormParam("totalMoney") double totalMoney) {
 		// 获取到由OpenSessionInViewFilter绑定到当前线程的Hibernate Session
 		moneyDao.setSession(currentSession());
@@ -179,10 +199,10 @@ public class JJBAction extends HibernateDaoSupport {
 	 * 		返回JSONResponse.syncData，携带items字段，值为Item组成的数组
 	 */
 	@POST
-	@Path("sync")
+	@Path("syncFromServer")
 	public String syncFromServer(
 			@FormParam("userId") int userId,
-			@FormParam("accessKey") @DefaultValue("") String accessKey,
+			@DefaultValue("") @FormParam("accessKey") String accessKey,
 			@FormParam("fromDateTime") @DefaultValue("") String rawFromDate) {
 		
 		boolean result = userRoleAuth(userId, accessKey);
@@ -209,12 +229,12 @@ public class JJBAction extends HibernateDaoSupport {
 	 * 		返回JSONResponse.syncOK，携带syncCount字段(成功上传的Item数)
 	 */
 	@POST
-	@Path("sync")
+	@Path("syncToServer")
 	@Consumes("application/x-www-form-urlencoded")
 	public String syncToServer(
 			@FormParam("userId") int userId,
-			@FormParam("accessKey") @DefaultValue("") String accessKey,
-			@FormParam("items") @DefaultValue("") String items) {
+			@DefaultValue("") @FormParam("accessKey") String accessKey,
+			@DefaultValue("") @FormParam("items") String items) {
 		boolean result = userRoleAuth(userId, accessKey);
 		if (!result)
 			return JSONResponse.needSignIn();
