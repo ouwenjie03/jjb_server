@@ -43,7 +43,7 @@ public class ItemDaoImpl extends BaseDaoImpl implements ItemDao {
 
 		List<Item> resultArr = (List<Item>) criteria.list();
 		for (Item item : resultArr) {
-			item.setItemId(item.getItemId().split("#")[1]);
+			item.setItemId(item.getItemId());
 		}
 		return resultArr;
 	}
