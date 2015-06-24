@@ -54,7 +54,7 @@ public class JSONResponse {
 		for (Item item : items) {
 			itemArr.put(item.toString());
 		}
-		result.put("items", itemArr.toString());
+		result.put("items", itemArr);
 		return result.toString();
 	}
 	

@@ -16,6 +16,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -39,6 +40,8 @@ import com.jjb.util.JSONResponse;
 @Path("/")
 @Produces("application/json")
 public class JJBAction extends HibernateDaoSupport {
+	private Logger logger = Logger.getLogger(JJBAction.class);
+	
 	private Session session;
 
 	private ItemDao itemDao;
@@ -65,9 +68,11 @@ public class JJBAction extends HibernateDaoSupport {
 	public String userSignIn(
 			@DefaultValue("") @FormParam("username") String username,
 			@DefaultValue("") @FormParam("password") String password) {
-		if (username.isEmpty() || password.isEmpty())// ||
-														// !password.matches("[0-9a-f]{32}"))
+		logger.debug(username + " " + password);
+		if (username.isEmpty() || password.isEmpty() || !password.matches("[0-9a-f]{32}")) {
+			logger.debug("登录失败，参数格式有误");
 			return JSONResponse.fail();
+		}
 		session = currentSession();
 		userDao.setSession(session);
 		accessKeyDao.setSession(session);
@@ -116,9 +121,11 @@ public class JJBAction extends HibernateDaoSupport {
 	public String userSignUp(
 			@DefaultValue("") @FormParam("username") String username,
 			@DefaultValue("") @FormParam("password") String password) {
-		if (username.isEmpty() || password.isEmpty())// ||
-														// !password.matches("[0-9a-f]{32}"))
+		logger.debug(username + " " + password);
+		if (username.isEmpty() || password.isEmpty() || !password.matches("[0-9a-f]{32}")) {
+			logger.debug("登录失败，参数格式有误");
 			return JSONResponse.fail();
+		}
 		session = currentSession();
 		userDao.setSession(session);
 		accessKeyDao.setSession(session);
@@ -181,7 +188,7 @@ public class JJBAction extends HibernateDaoSupport {
 	public String setting(@FormParam("userId") int userId,
 			@DefaultValue("") @FormParam("accessKey") String accessKey,
 			@FormParam("totalMoney") double totalMoney) {
-		// 获取到由OpenSessionInViewFilter绑定到当前线程的Hibernate Session
+		
 		moneyDao.setSession(currentSession());
 
 		boolean result = userRoleAuth(userId, accessKey);
@@ -217,6 +224,7 @@ public class JJBAction extends HibernateDaoSupport {
 	public String syncFromServer(@FormParam("userId") int userId,
 			@DefaultValue("") @FormParam("accessKey") String accessKey,
 			@FormParam("fromDateTime") @DefaultValue("") String rawFromDate) {
+		logger.debug(userId + " " + accessKey + " " + rawFromDate);
 
 		boolean result = userRoleAuth(userId, accessKey);
 		if (!result)
@@ -249,6 +257,7 @@ public class JJBAction extends HibernateDaoSupport {
 	public String syncToServer(@FormParam("userId") int userId,
 			@DefaultValue("") @FormParam("accessKey") String accessKey,
 			@DefaultValue("") @FormParam("items") String items) {
+		logger.debug(userId + " " + accessKey + " " + items);
 		boolean result = userRoleAuth(userId, accessKey);
 		if (!result)
 			return JSONResponse.needSignIn();
@@ -268,6 +277,7 @@ public class JJBAction extends HibernateDaoSupport {
 			currentObject = itemArr.getJSONObject(i);
 			currentItem = new Item();
 			try {
+				
 				currentItem.setUserId(currentObject.getInt("userId"));
 				currentItem.setItemId("" + currentObject.getInt("userId") + "#"
 						+ currentObject.getInt("itemId"));
