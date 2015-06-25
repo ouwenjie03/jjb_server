@@ -1,3 +1,6 @@
+create database pml;
+use pml;
+
 create table User(
 	userId INTEGER AUTO_INCREMENT PRIMARY KEY,
 	username VARCHAR(10) not null,
